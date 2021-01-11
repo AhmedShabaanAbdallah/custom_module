@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+<!--        <template id="report_invoice_inherit" inherit_id="account.report_invoice_document">-->
+
+<!--            <xpath expr="//div[@class='page']/h2" position="replace">-->
+
+<!--                <div class="custom" style="color:right">-->
+
+
+<!--                    <div>السجل الضريبي<span t-esc="res_company.vat"/></div>-->
+<!--                    <div> السجل التجاري<span t-esc="res_company.company_registry"/></div>-->
+
+
+<!--                </div>-->
+
+
+<!--            </xpath>-->
+
+<!--        </template>-->
+
+        <template id="report_header_custom_inherit" inherit_id="account.report_invoice_document">
+            <xpath expr="//div[@class='page']/h2" position="replace">
+                <h2 style="color: #006400;">
+                    <span t-if="o.type == 'out_invoice' and o.state == 'posted'">Invoice</span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                    <span t-if="o.type == 'out_refund'">Credit Note</span>
+                    <span t-if="o.type == 'in_refund'">Vendor Credit Note</span>
+                    <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
+                    <span t-if="o.name != '/'" t-field="o.name"/>
+                </h2>
+            </xpath>
+
+            <xpath expr="//div[@class='page']/div[@class='row mt32 mb32']" position="replace">
+                <div id="informations" class="row mt32 mb32">
+                    <div class="col-auto mw-100 mb-2" t-if="o.invoice_date" name="invoice_date">
+                        <strong  style="color: #FF7F50;">Invoice Date:</strong>
+                        <p class="m-0" t-field="o.invoice_date"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2" t-if="o.invoice_date_due and o.type == 'out_invoice' and o.state == 'posted'" name="due_date">
+                        <strong  style="color: #FF7F50;">Due Date:</strong>
+                        <p class="m-0" t-field="o.invoice_date_due"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2" t-if="o.invoice_origin" name="origin">
+                        <strong  style="color: #FF7F50;">Source:</strong>
+                        <p class="m-0" t-field="o.invoice_origin"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2" t-if="o.partner_id.ref" name="customer_code">
+                        <strong  style="color: #FF7F50;">Customer Code:</strong>
+                        <p class="m-0" t-field="o.partner_id.ref"/>
+                    </div>
+                    <div class="col-auto mw-100 mb-2" t-if="o.ref" name="reference">
+                        <strong  style="color: #FF7F50;">Reference:</strong>
+                        <p class="m-0" t-field="o.ref"/>
+                    </div>
+                </div>
+
+            </xpath>
+
+            <xpath expr="//div[@class='page']/table[@class='table table-sm o_main_table']/thead/tr" position="replace">
+
+                <tr>
+                    <!-- TODO: remove in master -->
+                    <t t-set="colspan" t-value="6"/>
+                    <th name="th_description" class="text-left" ><span style="color: #FF7F50;">Description</span></th>
+                    <!-- TODO: remove in master -->
+                    <th name="th_source" class="d-none text-left" t-if="0"><span style="color: #FF7F50;">Source Document</span></th>
+                    <th name="th_quantity" class="text-right"><span style="color: #FF7F50;">Quantity</span></th>
+                    <th name="th_priceunit"  t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="color: #FF7F50;">Unit Price</span></th>
+                    <th name="th_price_unit" t-if="display_discount" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                        <span style="color: #FF7F50;">Disc.%</span>
+                        <!-- TODO: remove in master -->
+                        <t t-set="colspan" t-value="colspan+1"/>
+                    </th>
+                    <th name="th_taxes" t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span style="color: #FF7F50;">Taxes</span></th>
+                    <th name="th_subtotal" class="text-right">
+                        <span groups="account.group_show_line_subtotals_tax_excluded" style="color: #FF7F50;">Amount</span>
+                        <span groups="account.group_show_line_subtotals_tax_included" style="color: #FF7F50;">Total Price</span>
+                    </th>
+                </tr>
+
+            </xpath>
+
+        </template>
+
+
+
+
+        <template id="report_invoice_inherit" inherit_id="web.external_layout_standard">
+
+            <xpath expr="//div/div/div/img" position="replace">
+
+                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 75px;" alt="Logo"/>
+
+
+            </xpath>
+
+            <xpath expr="//div[@name='company_address']" position="after">
+
+
+                <div class="col-6" style="text-align:right">
+
+                    <div>السجل الضريبي:<span t-esc="res_company.vat"/></div>
+                    <div> السجل التجاري:<span t-esc="res_company.company_registry"/></div>
+
+
+                </div>
+
+
+
+            </xpath>
+
+        </template>
+
+
+
+    </data>
+</odoo>
